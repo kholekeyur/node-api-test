@@ -34,7 +34,7 @@ app.post('/addUser', function (req, res) {
 
           //console.log(book)
 
-     let newValue="patient"+last
+     let newValue="user"+last
      console.log(book);
       
 
