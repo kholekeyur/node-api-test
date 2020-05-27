@@ -1,28 +1,9 @@
-// const express = require('express');
-// const bodyParser = require('body-parser');
-
-// const app = express();
-
-// app.use(bodyParser.urlencoded({ extended: false }));
-
-// app.post('/user', (req, res, next) => {
-//   res.send('<h1>User: ' + req.body.username + '</h1>');
-// });
-
-// app.get('/', (req, res, next) => {
-//   res.send(
-//     '<form action="/user" method="POST"><input type="text" name="username"><button type="submit">Create User</button></form>'
-//   );
-// });
-
-// app.listen(5000);
-
 
 var express = require('express');
 var app = express();
 var fs = require("fs");
 
-
+const bodyParser = require('body-parser');
 
 
 app.use((req, res, next) => {
@@ -37,9 +18,61 @@ app.get('/listUsers', function (req, res) {
 })
 
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/addUser', function (req, res) {
+   // First read existing users.
+
+   var obj = JSON.parse(fs.readFileSync('./users.json', 'utf8'));
+
+    let lastelement=Object.keys(obj)
+  
+      let last = lastelement.length + 1
+        console.log(last);
+     const book = req.body;
+
+          //console.log(book)
+
+     let newValue="patient"+last
+     console.log(book);
+      
+
+    
+     obj[newValue]=book[newValue]
+
+    // console.log(obj)
+   
+
+  fs.writeFile ("./users.json", JSON.stringify(obj), function(err) {
+    if (err) throw err;
+    console.log('complete');
+    }
+);
+      
+         res.end( JSON.stringify(obj));
+      
+   // });
+})
 
 
-var server = app.listen(8081, function () {
+
+
+app.get('/users/:id', function (req, res) {
+   // First read existing users.
+   fs.readFile("./" + "users.json", 'utf8', function (err, data) {
+      var users = JSON.parse( data );
+      var user = users["user" + req.params.id] 
+      console.log( user );
+      res.end( JSON.stringify(user));
+   });
+})
+
+
+
+const PORT = process.env.PORT || 8081;
+
+var server = app.listen(PORT, function () {
    var host = server.address().address
    var port = server.address().port
    console.log("Example app listening at http://%s:%s", host, port)
